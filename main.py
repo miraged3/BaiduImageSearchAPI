@@ -1,5 +1,7 @@
+import base64
 import json
 import random
+import urllib.request
 
 from flask import Flask, request
 from selenium import webdriver
@@ -24,11 +26,20 @@ def baidu():
     browser.find_element(by=By.XPATH, value='//span/input[@class="s_newBtn"]').click()
     image = browser.find_element(by=By.XPATH, value='//li[@class="imgitem"][' + str(
         random.randint(2, 6)) + ']/div/div/a/img').get_attribute('src')
-    result = {
-        'image': str(image)
-    }
-    browser.quit()
-    return json.dumps(result, ensure_ascii=False)
+    if str(image).startswith('http'):
+        address = urllib.request.urlopen(str(image))
+        img = address.read()
+        encoded_image = str(base64.b64encode(img))
+        result = {
+            'image': 'data:image/jpg;base64,' + encoded_image.split("'")[1]
+        }
+        return json.dumps(result, ensure_ascii=False)
+    else:
+        result = {
+            'image': str(image)
+        }
+        browser.quit()
+        return json.dumps(result, ensure_ascii=False)
 
 
 if __name__ == '__main__':
