@@ -25,7 +25,7 @@ def baidu():
     browser.find_element(by=By.XPATH, value='//span/input[@class="s_ipt"]').send_keys(data.get('keyword'))
     browser.find_element(by=By.XPATH, value='//span/input[@class="s_newBtn"]').click()
     image = browser.find_element(by=By.XPATH, value='//li[@class="imgitem"][' + str(
-        random.randint(1, 15)) + ']/div/div/a/img').get_attribute('src')
+        random.randint(2, 15)) + ']/div/div/a/img').get_attribute('src')
     if str(image).startswith('http'):
         address = urllib.request.urlopen(str(image))
         img = address.read()
