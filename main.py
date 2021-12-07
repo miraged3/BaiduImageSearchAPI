@@ -3,6 +3,7 @@ import json
 import random
 import urllib.request
 
+import yinglish
 from flask import Flask, request
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -47,6 +48,15 @@ def baidu():
             }
             browser.quit()
             return json.dumps(result, ensure_ascii=False)
+
+
+@app.route('/yinglish', methods=['POST'])
+def yin():
+    data = request.get_json(force=True)
+    result = {
+        'yinglish': yinglish.chs2yin(data.get('message'))
+    }
+    return json.dumps(result, ensure_ascii=False)
 
 
 if __name__ == '__main__':
