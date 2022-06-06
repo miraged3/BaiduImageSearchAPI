@@ -20,7 +20,6 @@ def baidu():
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-gpu')
-    options.add_argument("--window-size=1920,3840")
     browser = webdriver.Chrome(executable_path=driverLocation, chrome_options=options)
     browser.get('https://image.baidu.com')
     browser.find_element(by=By.XPATH, value='//span/input[@class="s_ipt"]').send_keys(data.get('keyword'))
