@@ -1,15 +1,18 @@
 import base64
 import json
 import random
+import time
 import urllib.request
 
-import yinglish
+from bs4 import BeautifulSoup
 from flask import Flask, request
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+import yinglish
+
 app = Flask(__name__)
-driverLocation = "./chromedriver"
+driverLocation = "./chromedriver.exe"
 
 
 @app.route('/image', methods=['POST'])
@@ -24,10 +27,13 @@ def baidu():
     browser.get('https://image.baidu.com')
     browser.find_element(by=By.XPATH, value='//span/input[@class="s_ipt"]').send_keys(data.get('keyword'))
     browser.find_element(by=By.XPATH, value='//span/input[@class="s_newBtn"]').click()
-    image = browser.find_element(by=By.XPATH, value='//li[@class="imgitem normal"][' + str(
-        random.randint(1, 15)) + ']/div/div[2]/a/img').get_attribute('src')
-    if str(image).startswith('http'):
-        address = urllib.request.urlopen(str(image))
+    time.sleep(3)
+    soup = BeautifulSoup(browser.page_source, features='html.parser')
+    all_images = soup.find_all('img', class_='main_img img-hover')
+    image = random.choice(all_images)
+    print(image['src'])
+    if str(image['src']).startswith('http'):
+        address = urllib.request.urlopen(str(image['src']))
         img = address.read()
         encoded_image = str(base64.b64encode(img))
         result = {
@@ -35,15 +41,15 @@ def baidu():
         }
         return json.dumps(result, ensure_ascii=False)
     else:
-        if 'data:image/jpg;base64,' in str(image):
+        if 'data:image/jpg;base64,' in str(image['src']):
             result = {
-                'image': str(image).replace('data:image/jpg;base64,', '')
+                'image': str(image['src']).replace('data:image/jpg;base64,', '')
             }
             browser.quit()
             return json.dumps(result, ensure_ascii=False)
         else:
             result = {
-                'image': str(image).replace('data:image/jpeg;base64,', '')
+                'image': str(image['src']).replace('data:image/jpeg;base64,', '')
             }
             browser.quit()
             return json.dumps(result, ensure_ascii=False)

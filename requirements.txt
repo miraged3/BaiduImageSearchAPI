@@ -1,2 +1,5 @@
-Flask
-selenium
+Flask~=2.2.2
+selenium~=4.6.0
+bs4~=0.0.1
+beautifulsoup4~=4.11.1
+jieba~=0.42.1
